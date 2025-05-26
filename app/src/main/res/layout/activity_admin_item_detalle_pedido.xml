@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_detalle_pedido"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#F5F5F5"
+    android:layout_marginBottom="8dp"
+    android:elevation="2dp">
+
+    <TextView
+        android:id="@+id/text_producto_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Producto ID: 1"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_cantidad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cantidad: 5" />
+
+    <TextView
+        android:id="@+id/text_precio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Precio: $10.0" />
+
+    <TextView
+        android:id="@+id/text_subtotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subtotal: $50.0" />
+
+
+</LinearLayout>
