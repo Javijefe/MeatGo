@@ -28,6 +28,7 @@ import retrofit2.Response;
 import java.util.List;
 
 public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.ViewHolder> {
+
     private List<Producto> productos;
     private Context context;
 
@@ -46,23 +47,21 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Producto producto = productos.get(position);
+
         holder.textViewNombre.setText(producto.getNombre());
         holder.textViewPrecio.setText(String.format("$%.2f", producto.getPrecio()));
         holder.textViewStock.setText(String.format("Stock: %.0f", producto.getStock()));
 
-        //Para cargar las imagenes
         Glide.with(holder.itemView.getContext())
                 .load(producto.getFoto())
                 .into(holder.imageViewProducto);
 
-
-        holder.editTextModificarStock.setText(""); // Limpiar el campo al iniciar
+        holder.editTextModificarStock.setText("");
         holder.buttonConfirmar.setOnClickListener(v -> {
             String stockInput = holder.editTextModificarStock.getText().toString();
             if (!stockInput.isEmpty()) {
                 int cantidadModificar = Integer.parseInt(stockInput);
                 if (cantidadModificar <= producto.getStock()) {
-                    // Llamada a la API para reservar cantidad
                     reservarCantidadEnBackend(producto, cantidadModificar, holder);
                 } else {
                     Toast.makeText(context, "Stock insuficiente", Toast.LENGTH_SHORT).show();
@@ -113,12 +112,10 @@ public class ProductosAdapter extends RecyclerView.Adapter<ProductosAdapter.View
 
         ReservarCantidadRequest request = new ReservarCantidadRequest(producto.getIdProductos(), cantidad, token);
 
-        // Llamada para actualizar el stock
         apiService.reservarCantidad(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    // Actualizar el stock local y en la UI
                     producto.setStock(producto.getStock() - cantidad);
                     holder.textViewStock.setText(String.format("Stock: %.0f", producto.getStock()));
                     Toast.makeText(context, "Cantidad reservada con éxito", Toast.LENGTH_SHORT).show();

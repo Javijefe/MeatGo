@@ -13,6 +13,7 @@ import com.example.meatgo.Backend.AumentarStockResponse;
 import com.example.meatgo.Backend.CestaRequest;
 import com.example.meatgo.Backend.CestaResponse;
 import com.example.meatgo.Backend.EliminarProductoCestaRequest;
+import com.example.meatgo.Backend.EliminarProductoCestaResponse;
 import com.example.meatgo.Backend.LoginRequest;
 import com.example.meatgo.Backend.LoginResponse;
 import com.example.meatgo.Backend.MisPedidosAcabadosRequest;
@@ -32,16 +33,16 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface ApiService {
-    @POST("registrarse")
+    @POST("/registrarse")
     Call<Void> registrarUsuario(@Body RegisterRequest request);
 
-    @POST("iniciar_sesion")
+    @POST("/iniciar_sesion")
     Call<LoginResponse> iniciarSesion(@Body LoginRequest request);
 
-    @GET("tipos_carne")
+    @GET("/tipos_carne")
     Call<TipoCarneResponse> obtenerTiposCarne();
 
-    @GET("productos")
+    @GET("/productos")
     Call<ProductoResponse> obtenerProductos();
 
     @POST("/reservar_cantidad")
@@ -51,7 +52,7 @@ public interface ApiService {
     Call<CestaResponse> verCesta(@Body CestaRequest request);
 
     @POST("/eliminar_producto_cesta")
-    Call<Void> eliminarProductoDeCesta(@Body EliminarProductoCestaRequest request);
+    Call<EliminarProductoCestaResponse> eliminarProductoDeCesta(@Body EliminarProductoCestaRequest request);
 
     @POST("/ver_solicitud")
     Call<MisPedidosResponse> verPedidoSolicitud(@Body MisPedidosRequest request);
@@ -59,7 +60,7 @@ public interface ApiService {
     @POST("/ver_pedido_completado")
     Call<MisPedidosAcabadosResponse> verPedidoSolicitud(@Body MisPedidosAcabadosRequest request);
 
-    @POST("iniciar_sesion_admin")
+    @POST("/iniciar_sesion_admin")
     Call<AdminLoginResponse> iniciarSesionAdmin(@Body AdminLoginRequest request);
 
     @POST("/aumentar_stock_producto")
@@ -68,13 +69,13 @@ public interface ApiService {
     @POST("/ver_todos_pedidos")
     Call<AdminTodosPedidosResponse> verTodosPedidos(@Body AdminTodosPedidosRequest request);
 
-    @POST("ver_detalles_pedidos")
+    @POST("/ver_detalles_pedidos")
     Call<VerDetallesPedidoResponse> verDetallesPedidos(@Body VerDetallesPedidoRequest request);
 
     @POST("/cambiar_estado_pedido_pendiente")
     Call<AdminCambiarEstadoPedidoResponse> cambiarEstadoPedidoPendiente(@Body AdminCambiarEstadoPedidoRequest request);
 
-    @POST("cambiar_estado_pedido_completado")
+    @POST("/cambiar_estado_pedido_completado")
     Call<AdminCambiarEstadoCompletadoResponse> cambiarEstadoPedidoCompletado(@Body AdminCambiarEstadoCompletadoRequest request);
 }
 

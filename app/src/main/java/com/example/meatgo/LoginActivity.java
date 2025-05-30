@@ -38,31 +38,37 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(v -> loginUser ());
 
-        // Registrarser
+
         registerButton.setOnClickListener(v -> openRegisterActivity());
 
-        // Admin
         adminButton.setOnClickListener(v -> openAdminLoginActivity());
     }
 
-    // Método de Iniciar Sesión
     private void loginUser () {
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
 
-        // Crear el objeto LoginRequest
+        if (email.isEmpty()) {
+            emailEditText.setError("Por favor, ingrese su correo electrónico");
+            emailEditText.requestFocus();
+            return;
+        }
+
+        if (password.isEmpty()) {
+            passwordEditText.setError("Por favor, ingrese su contraseña");
+            passwordEditText.requestFocus();
+            return;
+        }
+
         LoginRequest loginRequest = new LoginRequest(email, password);
 
-        // Obtener la instancia de ApiService
         ApiService apiService = ApiClient.getApiService();
 
-        // Realizar la llamada a la API
         Call<LoginResponse> call = apiService.iniciarSesion(loginRequest);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
-                    // Obtener el token del LoginResponse
                     LoginResponse loginResponse = response.body();
                     if (loginResponse != null) {
                         String token = loginResponse.getToken();
@@ -70,7 +76,6 @@ public class LoginActivity extends AppCompatActivity {
 
                         saveToken(token);
 
-                        // Abrir Productso Activity
                         Intent intent = new Intent(LoginActivity.this, ProductosActivity.class);
                         startActivity(intent);
                         finish();
@@ -87,6 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
     private void saveToken(String token) {
         getSharedPreferences("app_prefs", MODE_PRIVATE)
                 .edit()
@@ -94,13 +100,11 @@ public class LoginActivity extends AppCompatActivity {
                 .apply();
     }
 
-    // Método para abrir Registrar
     private void openRegisterActivity() {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
 
-    // Método para abrir Admin
     private void openAdminLoginActivity() {
         Intent intent = new Intent(LoginActivity.this, AdminLoginActivity.class);
         startActivity(intent);

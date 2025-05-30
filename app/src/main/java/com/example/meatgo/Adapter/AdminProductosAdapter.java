@@ -51,15 +51,12 @@ public class AdminProductosAdapter extends RecyclerView.Adapter<AdminProductosAd
         holder.textViewPrecio.setText(String.format("$%.2f", producto.getPrecio()));
         holder.textViewStock.setText(String.format("Stock: %.0f", producto.getStock()));
 
-        // Cargar la imagen del producto
         Glide.with(holder.itemView.getContext())
                 .load(producto.getFoto())
                 .into(holder.imageViewProducto);
 
-        // Limpiar el campo de entrada de stock
         holder.editTextModificarStock.setText("");
 
-        // Boton para aumentar el stock
         holder.buttonConfirmar.setOnClickListener(v -> {
             String stockInput = holder.editTextModificarStock.getText().toString();
             if (!stockInput.isEmpty()) {
@@ -114,14 +111,22 @@ public class AdminProductosAdapter extends RecyclerView.Adapter<AdminProductosAd
             @Override
             public void onResponse(Call<AumentarStockResponse> call, Response<AumentarStockResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Actualizar el stock local y la UI si la respuesta es exitosa
                     producto.setStock(producto.getStock() + cantidad);
                     holder.textViewStock.setText(String.format("Stock: %.0f", producto.getStock()));
                     Toast.makeText(context, "Stock aumentado con éxito", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, "Error al aumentar stock: " + response.message(), Toast.LENGTH_SHORT).show();
+                    String errorBody = "";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(context, "Error al aumentar stock: " + response.message() + "\n" + errorBody, Toast.LENGTH_LONG).show();
                 }
             }
+
 
             @Override
             public void onFailure(Call<AumentarStockResponse> call, Throwable t) {

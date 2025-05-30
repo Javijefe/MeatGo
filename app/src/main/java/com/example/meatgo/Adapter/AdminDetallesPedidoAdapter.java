@@ -41,7 +41,7 @@ public class AdminDetallesPedidoAdapter extends RecyclerView.Adapter<AdminDetall
     public void onBindViewHolder(@NonNull AdminDetallesPedidoAdapter.ViewHolder holder, int position) {
         VerDetallesPedidoResponse.DetallePedido detalle = detalles.get( position);
 
-        holder.tvProductoId.setText("Producto ID: " + detalle.getProducto_id());
+        holder.tvProductoId.setText("Producto ID: " + detalle.getProductoId());
         holder.tvCantidad.setText("Cantidad: " + detalle.getCantidad());
         holder.tvPrecio.setText("Precio: $" + detalle.getPrecio());
         holder.tvSubtotal.setText("Subtotal: $" + detalle.getSubtotal());

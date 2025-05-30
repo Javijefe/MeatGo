@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class Pedido {
 
-    @SerializedName("id_pedido")
+    @SerializedName("idPedido")
     private int idPedidos;
 
-    @SerializedName("id_usuario")
+    @SerializedName("idUsuario")
     private int usuarioId;
 
     @SerializedName("fecha")

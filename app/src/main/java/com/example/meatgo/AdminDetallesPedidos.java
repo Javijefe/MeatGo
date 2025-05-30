@@ -41,7 +41,6 @@ public class AdminDetallesPedidos extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_detalles);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Obtener pedidoId del intent
         pedidoId = getIntent().getIntExtra("pedidoId", -1);
         if (pedidoId == -1) {
             Toast.makeText(this, "Pedido no válido", Toast.LENGTH_SHORT).show();
@@ -49,7 +48,6 @@ public class AdminDetallesPedidos extends AppCompatActivity {
             return;
         }
 
-        // Obtener token de SharedPreferences
         SharedPreferences prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
         token = prefs.getString("admin_token", null);
         if (token == null) {
@@ -61,14 +59,11 @@ public class AdminDetallesPedidos extends AppCompatActivity {
         adapter = new AdminDetallesPedidoAdapter(this, null);
         recyclerView.setAdapter(adapter);
 
-        // Cargar detalles del pedido
         cargarDetallesDesdeBackend(pedidoId);
 
-        // Botón Pendiente
         Button btnPendiente = findViewById(R.id.btn_pendiente);
         btnPendiente.setOnClickListener(v -> cambiarEstadoPedidoPendiente());
 
-        // Botón Completado
         Button btnCompletado = findViewById(R.id.btn_completado);
         btnCompletado.setOnClickListener(v -> cambiarEstadoPedidoCompletado());
     }
@@ -84,7 +79,17 @@ public class AdminDetallesPedidos extends AppCompatActivity {
                     List<VerDetallesPedidoResponse.DetallePedido> detalles = response.body().getDetalles();
                     adapter.setDetalles(detalles);
                 } else {
-                    Toast.makeText(AdminDetallesPedidos.this, "Error al cargar detalles", Toast.LENGTH_SHORT).show();
+                    String errorBody = "";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        errorBody = "No se pudo leer errorBody";
+                    }
+                    Toast.makeText(AdminDetallesPedidos.this,
+                            "Error al cargar detalles: " + response.code() + " " + response.message() + "\n" + errorBody,
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -94,6 +99,7 @@ public class AdminDetallesPedidos extends AppCompatActivity {
             }
         });
     }
+
 
     private void cambiarEstadoPedidoPendiente() {
         AdminCambiarEstadoPedidoRequest request = new AdminCambiarEstadoPedidoRequest(token, pedidoId);

@@ -19,33 +19,38 @@ import com.example.meatgo.R;
 
 import java.util.ArrayList;
 import java.util.List;
+public class TiposCarneAdapter extends RecyclerView.Adapter<TiposCarneAdapter.TipoCarneViewHolder> {
 
-public class TiposCarneAdapter extends RecyclerView.Adapter<TiposCarneAdapter.ViewHolder> {
-    private List<TipoCarne> tiposCarne;
-    private List<Producto> productos;
+    private List<TipoCarne> tiposCarneList;
+    private List<Producto> productosList;
+    private Context context;
 
-    public TiposCarneAdapter(List<TipoCarne> tiposCarne, List<Producto> productos) {
-        this.tiposCarne = tiposCarne;
-        this.productos = productos;
+    public TiposCarneAdapter(Context context, List<TipoCarne> tiposCarneList, List<Producto> productosList) {
+        this.context = context;
+        this.tiposCarneList = tiposCarneList;
+        this.productosList = productosList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TipoCarneViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_tipos_carne, parent, false);
-        return new ViewHolder(view);
+        return new TipoCarneViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TipoCarne tipoCarne = tiposCarne.get(position);
-        holder.textViewNombre.setText(tipoCarne.getNombre());
+    public void onBindViewHolder(@NonNull TipoCarneViewHolder holder, int position) {
+        TipoCarne tipoCarne = tiposCarneList.get(position);
+        holder.textViewNombreTipo.setText(tipoCarne.getNombre());
 
-        // Filtramos los productos por tipo de carne
-        List<Producto> productosPorTipo = obtenerProductosPorTipo(tipoCarne.getIdTiposCarne());
+        List<Producto> productosFiltrados = new ArrayList<>();
+        for (Producto producto : productosList) {
+            if (producto.getTipoId() == tipoCarne.getIdTiposCarne()) {
+                productosFiltrados.add(producto);
+            }
+        }
 
-
-        ProductosAdapter productosAdapter = new ProductosAdapter(productosPorTipo, holder.itemView.getContext());
+        ProductosAdapter productosAdapter = new ProductosAdapter(productosFiltrados,context);
         holder.recyclerViewProductos.setAdapter(productosAdapter);
         holder.recyclerViewProductos.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
 
@@ -56,33 +61,27 @@ public class TiposCarneAdapter extends RecyclerView.Adapter<TiposCarneAdapter.Vi
             context.startActivity(intent);
             //No ponemos el finish para poder volver
         });
+
     }
 
     @Override
     public int getItemCount() {
-        return tiposCarne.size();
+        return tiposCarneList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewNombre;
-        public RecyclerView recyclerViewProductos;
+    static class TipoCarneViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewNombreTipo;
+        RecyclerView recyclerViewProductos;
         public Button btnCarrito;
 
-        public ViewHolder(View itemView) {
+
+        public TipoCarneViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewNombre = itemView.findViewById(R.id.textViewNombre);
+            textViewNombreTipo = itemView.findViewById(R.id.textViewNombre);
             recyclerViewProductos = itemView.findViewById(R.id.recyclerViewProductos);
             btnCarrito = itemView.findViewById(R.id.btn_Carrito);
-        }
-    }
 
-    private List<Producto> obtenerProductosPorTipo(int idTipoCarne) {
-        List<Producto> productosFiltrados = new ArrayList<>();
-        for (Producto producto : productos) {
-            if (producto.getTipoId() == idTipoCarne) {
-                productosFiltrados.add(producto);
-            }
         }
-        return productosFiltrados;
     }
 }
+

@@ -15,7 +15,7 @@ public class AdminLoginRequest {
 
     public void setEmail(String email) {
         this.email = email;
-    }
+    }   
 
     public String getContraseña() {
         return contraseña;

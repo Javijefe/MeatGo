@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.meatgo.Backend.CestaResponse;
+import com.example.meatgo.Backend.EliminarProductoCestaResponse;
 import com.example.meatgo.Backend.ReservarCantidadRequest;
 import com.example.meatgo.Models.Producto;
 import com.example.meatgo.RetroFit.ApiClient;
@@ -94,27 +95,36 @@ public class CestaAdapter extends RecyclerView.Adapter<CestaAdapter.ViewHolder> 
         EliminarProductoCestaRequest request = new EliminarProductoCestaRequest(token, Id_Producto);
 
         // Llamada para eliminar
-        apiService.eliminarProductoDeCesta(request).enqueue(new Callback<Void>() {
+        apiService.eliminarProductoDeCesta(request).enqueue(new Callback<EliminarProductoCestaResponse>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    // Actualizar el stock local y en la UI
-                    // producto.setStock(producto.getStock() - cantidad);
-                    // holder.textViewStock.setText(String.format("Stock: %.0f", producto.getStock()));
+            public void onResponse(Call<EliminarProductoCestaResponse> call, Response<EliminarProductoCestaResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    EliminarProductoCestaResponse respuesta = response.body();
                     int position = holder.getAdapterPosition();
                     productos.remove(position);
                     notifyItemRemoved(position);
-                    Toast.makeText(context, "Producto eliminado con éxito", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, respuesta.getMensaje(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, "Error al eliminar el productos", Toast.LENGTH_SHORT).show();
+                    int code = response.code();
+                    String errorBody = "";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(context, "Error al eliminar: Código " + code, Toast.LENGTH_LONG).show();
+                    System.out.println("Error al eliminar producto. Código: " + code + ", Cuerpo: " + errorBody);
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<EliminarProductoCestaResponse> call, Throwable t) {
                 Toast.makeText(context, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
-}
+
+    }
+    }

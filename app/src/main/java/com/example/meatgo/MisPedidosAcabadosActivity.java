@@ -54,13 +54,18 @@ public class MisPedidosAcabadosActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MisPedidosAcabadosResponse> call, Response<MisPedidosAcabadosResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Actualiza la lista de pedidos
-                    listaPedidos.clear();
-                    listaPedidos.add(response.body());
-                    adapter.notifyDataSetChanged(); // Notifica al adaptador que los datos han cambiado
-                } else {
-                    Toast.makeText(MisPedidosAcabadosActivity.this, "Error al obtener los pedidos", Toast.LENGTH_SHORT).show();
+                    MisPedidosAcabadosResponse pedido = response.body();
+
+                    if (pedido.getId_pedido() != null) {
+                        listaPedidos.clear();
+                        listaPedidos.add(pedido);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        listaPedidos.clear();
+                        adapter.notifyDataSetChanged();
+                    }
                 }
+
             }
 
             @Override

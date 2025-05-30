@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     //para cambiar la ruta del internet
-    private static final String BASE_URL = "http://172.20.10.13:8000/";
+    private static final String BASE_URL = "http://172.20.10.13:8080/";
     private static Retrofit retrofit;
 
     public static Retrofit getRetrofit() {

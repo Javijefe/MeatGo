@@ -1,7 +1,12 @@
 package com.example.meatgo.Backend;
 
+import com.google.gson.annotations.SerializedName;
+
 public class AumentarStockRequest {
+
+    @SerializedName("productoId")
     private int producto_id;
+
     private double cantidad;
     private String token;
 

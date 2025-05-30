@@ -1,7 +1,6 @@
 package com.example.meatgo.Backend;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class VerDetallesPedidoResponse {
@@ -35,8 +34,8 @@ public class VerDetallesPedidoResponse {
 
     public static class DetallePedido {
 
-        @SerializedName("producto_id")
-        private int producto_id;
+        @SerializedName("productoId")
+        private int productoId;
 
         @SerializedName("cantidad")
         private int cantidad;
@@ -47,39 +46,39 @@ public class VerDetallesPedidoResponse {
         @SerializedName("subtotal")
         private double subtotal;
 
-        public DetallePedido(int producto_id, int cantidad, double precio, double subtotal) {
-            this.producto_id = producto_id;
+        public DetallePedido(int productoId, int cantidad, double precio, double subtotal) {
+            this.productoId = productoId;
             this.cantidad = cantidad;
             this.precio = precio;
             this.subtotal = subtotal;
         }
 
-        public int getProducto_id() {
-            return producto_id;
+        public int getProductoId() {
+            return productoId;
+        }
+
+        public void setProductoId(int productoId) {
+            this.productoId = productoId;
         }
 
         public int getCantidad() {
             return cantidad;
         }
 
-        public double getPrecio() {
-            return precio;
-        }
-
-        public double getSubtotal() {
-            return subtotal;
-        }
-
-        public void setProducto_id(int producto_id) {
-            this.producto_id = producto_id;
-        }
-
         public void setCantidad(int cantidad) {
             this.cantidad = cantidad;
         }
 
+        public double getPrecio() {
+            return precio;
+        }
+
         public void setPrecio(double precio) {
             this.precio = precio;
+        }
+
+        public double getSubtotal() {
+            return subtotal;
         }
 
         public void setSubtotal(double subtotal) {

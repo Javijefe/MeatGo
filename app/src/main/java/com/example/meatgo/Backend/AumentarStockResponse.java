@@ -1,8 +1,12 @@
 package com.example.meatgo.Backend;
 
+import com.google.gson.annotations.SerializedName;
+
 public class AumentarStockResponse {
     private String status;
     private String mensaje;
+
+    @SerializedName("nuevoStock")
     private double nuevo_stock;
 
     public AumentarStockResponse(String status, String mensaje, double nuevo_stock) {

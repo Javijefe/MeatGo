@@ -1,29 +1,37 @@
 package com.example.meatgo;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.meatgo.Adapter.TiposCarneAdapter;
 import com.example.meatgo.Backend.ProductoResponse;
 import com.example.meatgo.Backend.TipoCarneResponse;
 import com.example.meatgo.Models.Producto;
 import com.example.meatgo.Models.TipoCarne;
+import com.example.meatgo.R;
 import com.example.meatgo.RetroFit.ApiClient;
 import com.example.meatgo.RetroFit.ApiService;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProductosActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewTiposCarne;
     private TiposCarneAdapter tiposCarneAdapter;
-    private List<TipoCarne> tiposCarneList;
-    private List<Producto> productosList;
+
+    private ApiService apiService;
+
+    private List<TipoCarne> tiposCarneList = new ArrayList<>();
+    private List<Producto> productosList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,62 +41,58 @@ public class ProductosActivity extends AppCompatActivity {
         recyclerViewTiposCarne = findViewById(R.id.recyclerViewProductos);
         recyclerViewTiposCarne.setLayoutManager(new LinearLayoutManager(this));
 
-        tiposCarneList = new ArrayList<>();
-        productosList = new ArrayList<>();
+        apiService = ApiClient.getApiService();
 
-        cargarDatos();
-
-        tiposCarneAdapter = new TiposCarneAdapter(tiposCarneList, productosList);
-        recyclerViewTiposCarne.setAdapter(tiposCarneAdapter);
-
+        // Cargar tipos de carne primero
+        cargarTiposCarneDesdeApi();
     }
 
-    // Método para cargar los tipos de carne y productos
-    private void cargarDatos() {
-        ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
+    private void cargarTiposCarneDesdeApi() {
+        Call<TipoCarneResponse> callTipos = apiService.obtenerTiposCarne();
 
-        //Llamada para obtener los tipos de carne
-        apiService.obtenerTiposCarne().enqueue(new Callback<TipoCarneResponse>() {
+        callTipos.enqueue(new Callback<TipoCarneResponse>() {
             @Override
             public void onResponse(Call<TipoCarneResponse> call, Response<TipoCarneResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    tiposCarneList.clear();
-                    tiposCarneList.addAll(response.body().getTipos_carne());
+                    tiposCarneList = response.body().getTipos_carne();
 
-                    // Ahora que tenemos los tipos de carne, notificar al adaptador de tipos de carne
-                    tiposCarneAdapter.notifyDataSetChanged();
+                    // Luego de cargar los tipos, cargar productos
+                    cargarProductosDesdeApi();
+
                 } else {
-                    Log.e("API Error", "Error en la respuesta de tipos de carne: " + response.message());
+                    Toast.makeText(ProductosActivity.this, "Error al cargar tipos de carne", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<TipoCarneResponse> call, Throwable t) {
-                Log.e("API Error", "Error al obtener tipos de carne: " + t.getMessage());
+                Toast.makeText(ProductosActivity.this, "Fallo en conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
-        // Llamada para obtener productos
-        apiService.obtenerProductos().enqueue(new Callback<ProductoResponse>() {
+    private void cargarProductosDesdeApi() {
+        Call<ProductoResponse> callProductos = apiService.obtenerProductos();
+
+        callProductos.enqueue(new Callback<ProductoResponse>() {
             @Override
             public void onResponse(Call<ProductoResponse> call, Response<ProductoResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    productosList.clear();
-                    productosList.addAll(response.body().getProductos());
+                    productosList = response.body().getProductos();
 
-                    // Ahora que tenemos los productos, actualizar el adaptador de tipos de carne
-                    tiposCarneAdapter.notifyDataSetChanged();
+                    tiposCarneAdapter = new TiposCarneAdapter(ProductosActivity.this, tiposCarneList, productosList);
+                    recyclerViewTiposCarne.setAdapter(tiposCarneAdapter);
+
                 } else {
-                    Log.e("API Error", "Error en la respuesta de productos: " + response.message());
+                    Toast.makeText(ProductosActivity.this, "Error al cargar productos", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ProductoResponse> call, Throwable t) {
-                Log.e("API Error", "Error al obtener productos: " + t.getMessage());
+                Toast.makeText(ProductosActivity.this, "Fallo en conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-
 }
+
